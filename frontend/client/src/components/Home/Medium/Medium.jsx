@@ -9,7 +9,7 @@ const Medium = () => {
     <h4 className='w3-xxlarge font-effect-neon'>PROTECT YOUR FAMILY  AND <br></br>
  YOUR FUTURE
 </h4>
-<span className="w3-text-white w3-medium w3-wide w3-bold w3-padding-top-64 w3-margin-32" style={{fontStyle:"bolder"}}>Share your Decentralized Asset to your <br></br>Inheritors with Insudor</span>
+<span className=" font-effect-3d w3-text-white w3-medium w3-wide w3-bold w3-padding-top-64 w3-margin-32" style={{fontStyle:"bolder"}}>Share your Decentralized Asset to your <br></br>Inheritors with Insudor</span>
 <div className='w3-container w3-margin'>
 <Button/>
 

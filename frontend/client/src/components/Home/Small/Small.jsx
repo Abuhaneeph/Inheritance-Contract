@@ -11,7 +11,7 @@ const Small = () => {
     <h4 className='font-effect-neon'>PROTECT YOUR FAMILY AND<br></br>
  YOUR FUTURE
 </h4>
-<span className="w3-text-white w3-bold  w3-serif w3-padding-top-64 w3-margin-32" style={{fontSize:"15px"}}>Share your Decentralized Asset to your <br></br>Inheritors with Insudor</span>
+<span className="w3-text-white w3-bold font-effect-3d  w3-serif w3-padding-top-64 w3-margin-32" style={{fontSize:"15px",fontFamily:"font-family: 'Coiny, cursive,Gravitas One, cursive,Rubik Moonrocks, cursive"}}>Share your Decentralized Asset to your <br></br>Inheritors with Insudor</span>
 <div className='w3-container w3-margin'>
 <Button/>
 </div>

@@ -1,99 +1,126 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity ^0.8.7;
 
 import "hardhat/console.sol";
 
-/**
-Inheritance Smart-contract is a contract where the owner of an digital asset
-can share his/her asset to his/her inheritors and assigned a Lawyer to the
-that will tell the contract the Owner is dead so that the asset will be distributed to 
-his/her Inheritors
-
- **/
-
 contract Inheritance{
-  address public  lawyer;
-  address public  assetOwner;
-  uint256 public fortune; 
-  bool public isDeceased;
-  address payable [] public familyWallet;
-  mapping(address => uint) inheritance;
-  struct Family{
-    address familymember;
-    uint amount;
-  }
-  Family[] inheritors;
-   event Transfer (address from,address to, uint amount);
-  
- 
-  modifier onlyLawyer{
-      require(msg.sender == lawyer,"Only the Lawyer is allowed");
-      _;
-  }
-    modifier mustbeDeceased{
-        require(isDeceased == true);
-        _;
+    struct Property{
+        address owner;
+        address lawyer;
+        address payable [] inheritors;
+        uint256[] eachMemberAmount;
+        uint256 asset;
+        uint256 id;
     }
- 
- modifier onlyOwner{
-    require(msg.sender == assetOwner,"Only AssetOwner is allowed");
-    _;
+mapping (uint256 => Property) eachInheritance;
+uint256 public ID;
+
+   struct familyMember{
+       address owner;
+       address inheritor;
+       uint256 amount;
+       uint256 id;
+   }
+familyMember[] private allInheritorsList;
+
+
+//error
+error onlyLawyer();
+error onlyOwner();
+error InsufficientFund();
+error invalidID();
+
+function assignAsset(address _lawyer) payable external  {
+    ID++;
+   Property storage p=eachInheritance[ID];
+    p.owner=msg.sender;
+    p.lawyer=_lawyer;
+    p.asset=msg.value;
+    p.id=ID;
+    console.log("ID is %s",p.id); 
+     console.log("The owner is %s,The Lawyer is %s,The Asset is %s",p.owner,p.lawyer,p.asset);  
+}
+
+function shareAsset(address payable _inheritor, uint256 _amount,uint256 _id) payable external{
+    Property storage p=eachInheritance[_id];
+    if(_id != p.id){
+        revert invalidID();
+    }
+    
+    if(msg.sender != p.owner){
+        revert onlyOwner();
+    }
+    if(p.asset < _amount){
+        revert InsufficientFund();
+    }
+   p.asset-=_amount;
+   uint256 amount=_amount;
+   p.eachMemberAmount.push(amount);
+   p.inheritors.push(_inheritor);   
+ console.log("ID is %s",p.id); 
+console.log("The owner is %s,The Lawyer is %s,The Asset is %s",p.owner,p.lawyer,p.asset);  
+}
+
+function changeLawyer(address _lawyer,uint256 _id) external{ 
+      Property storage p=eachInheritance[_id];
+    if(_id != p.id){
+        revert invalidID();
+    }
+    
+    if(msg.sender != p.owner){
+        revert onlyOwner();
+    }
+   p.lawyer=_lawyer;
+
+
+}
+
+
+function payout(uint256 _id) payable external{
+ Property storage p=eachInheritance[_id];
+     if(_id != p.id){
+        revert invalidID();
+   }
+    if(msg.sender != p.lawyer){
+        revert onlyLawyer();
+    }   
+  
+for(uint256 i=0;i<p.inheritors.length;i++){
+    p.inheritors[i].transfer(p.eachMemberAmount[i]);
+    allInheritorsList.push(familyMember(p.owner,p.inheritors[i],p.eachMemberAmount[i],p.id));
+console.log("The address is %s inherited %s from %s",p.inheritors[i],p.eachMemberAmount[i],p.owner);
+
+}
+p.inheritors=new address payable[](0);
+p.eachMemberAmount=new uint256[](0);
+}
+function getOwner(uint256 _id) external view returns (address){ 
+Property storage p=eachInheritance[_id];
+    return p.owner; 
+}
+
+function getLawyer(uint256 _id) external view returns(address){
+Property storage p=eachInheritance[_id];
+console.log("The new Lawyer is %s",p.lawyer);
+    return p.lawyer; 
+}
+
+function getFamilyList(uint256 _id) external view returns(address payable [] memory){
+  Property storage p=eachInheritance[_id];
+  return p.inheritors;
+}
+
+ function getAllInheritors() external view returns(familyMember[] memory){
+     return allInheritorsList;
  }
 
 
- function assignAsset(address _lawyer) payable public{
-      assetOwner=msg.sender;
-      lawyer = _lawyer;
-      fortune=msg.value;
-      isDeceased = false;
-      console.log("Fortune is %s,The Owner is %s",fortune,assetOwner);
-
- }
-
-    function setInheritance(address wallet, uint amount)onlyOwner  payable public {
-       
-        require(amount <= fortune,"Insufficient Funds");
-        inheritance[wallet]= amount;
-        fortune-=amount;
-        familyWallet.push(payable(wallet));
-        console.log("Fortune is %s,The Owner is %s",fortune,assetOwner);
-
-    }
-
-   function changeLawyer(address _lawyer) onlyOwner public{
-         lawyer = _lawyer;
-   }
+function countFamily(uint256 _id) external view returns (uint256){
+    Property storage p=eachInheritance[_id];
+    console.log("The Inheritors array length is %s",p.inheritors.length);
+  return p.inheritors.length;
+}
 
 
-
-   function payout() mustbeDeceased private {
-       require(fortune == 0,"Left over fund not assigned to the Family Wallet");
-       for(uint256 i=0; i <familyWallet.length; i++){
-           //Transfer eth to family members
-           familyWallet[i].transfer(inheritance[familyWallet[i]]);
-           //push family members address with the amount transferred to them
-           inheritors.push(Family(familyWallet[i],inheritance[familyWallet[i]]));           
-           
-           emit Transfer (assetOwner, familyWallet[i],inheritance[familyWallet[i]]);
-            
-           
-       }
-  
-   }
-  
-   function hasDeceased() onlyLawyer public{
-       isDeceased = true;
-       payout();  
-   }
-   
-  
-  
-
-  function FamilyLists() public view returns(Family[] memory){
-      return inheritors;
-  }
-
- 
-  
 }

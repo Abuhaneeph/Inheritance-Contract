@@ -12,48 +12,59 @@ getAllAssets()
 
 const {createEthereumContract} = useContext(InheritanceContext)
 const getAllAssets=async()=>{
+  if(!window.ethereum){
+    alert("Install Metamask Wallet")
+    return;  
+  }
  const InheritanceContract=await createEthereumContract();
- const AssetOwner= await InheritanceContract.assetOwner();
-//console.log(AssetOwner)
- const InheritanceLists= await InheritanceContract.FamilyLists();
+ 
+ const InheritanceLists= await InheritanceContract.getAllInheritors();
 
 console.log(InheritanceLists)
  const structuredList=InheritanceLists.map((eachMember)=>({
-    address: shortenAddress(eachMember.familymember),
+    address: shortenAddress(eachMember.inheritor),
     amount:  ethers.utils.formatEther(eachMember.amount),
-    owner:   shortenAddress(AssetOwner)
-    
+    owner:   shortenAddress(eachMember.owner),
+    id:      eachMember.id.toNumber()
  }))
- console.log(structuredList)
+ 
   setList(structuredList);
  
 
 
 
 
-//console.log(AssetOwner)
+
 }
   return (
     <>
-    <center><h1>SHARED ASSET</h1></center>  
-      <div className='w3-container'>
-    <div className="w3-row">
+    <center><h1 className='font-effect-fire animate__animated animate__flip animate__slower animate__infinite' style={{fontFamily: "Audiowide, sans-serif",fontSize:'25px'}}>SHARED ASSET</h1></center>  
+  
+      <div className='w3-container w3-responsive'>
+
+    <table className='w3-table w3-medium wow heartBeat' data-relay="0.2" style={{backgroundImage:"linear-gradient(360deg,#ba55d3,#9400d3)"}}>
       {list.map((eachInheritor,index)=> {
       return (
        
 
-    <div key={index} className="w3-container w3-margin w3-round w3-panel w3-third  w3-deep-purple"  >  
+<center>
+    <tr key={index} className="w3-round w3-padding ">  
         
-        <center>
-        <p>Address from: {eachInheritor.owner}</p>
-        <p>Address to:  {eachInheritor.address}  </p>
-        <p>Amount: {eachInheritor.amount}ETH </p>
-        </center>
-      </div>
-      
+        
+        <td className='w3-center'><th className='w3-center w3-text-white'>Inherited from: </th>{eachInheritor.owner}</td>
+        <td className='w3-center'><th className='w3-center w3-text-white'>Inheritor's: </th> {eachInheritor.address}  </td>
+        <td className='w3-center'><th className='w3-center w3-text-white'>Amount Inherited:</th> {eachInheritor.amount}ETH </td>
+        <td className='w3-center'><th className='w3-center w3-text-white'>Inheritance ID:</th> {eachInheritor.id}</td>
+        
+      </tr>
+      </center>   
+
+     
+  
       )})}
+    </table>
     </div>
-    </div>
+   
     </>
   )
 }

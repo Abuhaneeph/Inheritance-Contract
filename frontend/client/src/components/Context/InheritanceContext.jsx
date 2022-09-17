@@ -11,9 +11,10 @@ const { ethereum } = window;
 export const InheritanceProvider = ({children}) => {
   const [form, setform] = useState({amount:"",address:""})
   const[currentAccount,setCurrentAccount]=useState("");
-const [newLawyer, setnewLawyer] = useState("");
- const [form2, setform2] = useState({AMOUNT:"",ADDRESS:""})
+const [newLawyer, setNewLawyer] = useState({newLawyerAddress:"",id:""});
+ const [form2, setform2] = useState({AMOUNT:"",ADDRESS:"",ID:""})
  const [connected, setConnected] = useState(false)
+ const[id,setId]=useState(0);
   const createEthereumContract = async() => {
     if(!ethereum){
       alert("Install Metamask")
@@ -50,8 +51,9 @@ const [newLawyer, setnewLawyer] = useState("");
   };
 
   const changeLawyer = (e) => {
-    setnewLawyer(e.target.value);
-      
+    setNewLawyer(prevState=>{
+      return {...prevState,[e.target.name] :e.target.value};
+    })
     };
   
 
@@ -72,7 +74,7 @@ const [newLawyer, setnewLawyer] = useState("");
 
   
   return (
-    <InheritanceContext.Provider value={{newLawyer,changeLawyer,form2,setform2,connected,setConnected,changeHandler2,currentAccount,connectWallet,form,setform,changeHandler,createEthereumContract}}>
+    <InheritanceContext.Provider value={{newLawyer,setNewLawyer,changeLawyer,form2,setform2,connected,setConnected,changeHandler2,currentAccount,connectWallet,form,setform,changeHandler,createEthereumContract}}>
     {children}
     </InheritanceContext.Provider>
     

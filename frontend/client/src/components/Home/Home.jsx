@@ -14,7 +14,7 @@ const Home = () => {
 
 <div className="w3-display-container w3-text-white">
   <img src={hero} alt="Lights" style={{width:"100%"}} className="w3-grayscale-min"></img>
-  <div className="w3-display-topleft w3-container w3-text-white font-effect-neon w3-wide" style={{top:"5px"}}>INSUDOR</div>
+  <div className="w3-display-topleft wow slideInLeft w3-container w3-text-white font-effect-neon w3-wide" style={{top:"5px"}} data-wow-delay="0.1s">INSUDOR</div>
   <Nav/>
  
  <Large/>

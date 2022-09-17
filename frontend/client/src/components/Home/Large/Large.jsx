@@ -7,7 +7,7 @@ const Large = () => {
   <h1 className='w3-xxxlarge font-effect-neon'>PROTECT YOUR FAMILY<br></br>
 AND YOUR FUTURE
 </h1>
-<span className="w3-text-white w3-large w3-wide w3-padding-top-64 w3-margin-32">Share your Decentralized Asset to your <br></br>Inheritors with Insudor</span>
+<span className=" font-effect-3d w3-text-white w3-large w3-wide w3-padding-top-64 w3-margin-32">Share your Decentralized Asset to your <br></br>Inheritors with Insudor</span>
 <div className='w3-container w3-margin'>
 
 <Button/>
